@@ -1,0 +1,37 @@
+
+body { 
+    margin: 2em 3em;
+}
+
+h1 {
+    color:gray;
+    font-size: 1.8em;
+}
+
+h2 {
+    color:rgb(47, 58, 79);
+    font-size: 1.2em;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
+footer p {
+    font-size: 12px;
+    color:rgba(128, 128, 128, 0.4);
+    margin-bottom: 20px;
+}
+
+#outputImage {
+    max-height: 250px;
+    margin: 10px 0;
+}
+
+#customFileName,
+#outputFormatSelect,
+#downloadLink {
+    display: none;
+    margin: 10px 0;
+}

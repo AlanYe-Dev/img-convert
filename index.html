@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Image Format Conversion Utility</title>
+    <meta name="description" content="This utility enables direct image conversion within your browser, utilizing JavaScript. This approach eliminates the need to upload your images to the internet during the conversion process, thereby ensuring the safety and privacy of your images.">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div id="introduction">
+        <h1 id="introductionTitle">Image Format Conversion Utility</h1>
+        <p>This utility enables direct image conversion within your browser, utilizing JavaScript. </p>
+        <p>For more information, check out the source code at <a href="https://github.com/AlanYe-Dev/img-convert">GitHub</a>.</p>
+    </div>
+    <div id="details">
+        <h2>Details</h2>
+        <details>
+        <summary>Click to see the details and intructions</summary>
+        <p>This approach eliminates the need to upload your images to the internet during the conversion process, <br>thereby ensuring the safety and privacy of your images. This sets it apart from conventional online image conversion tools.</p>
+        <p>Instructions:</p>
+        <p>1. Select an image file from your computer.<br>2. Select the desired output format.<br>3. Enter a custom file name (optional).<br>4. Click the "Download Converted Image" button to download the converted image.</p>
+        </details>
+    <h2>Upload Image</h2>
+    <input type="file" id="fileInput" accept="image/*">
+    <br>
+    <img id="outputImage">
+    <div id="settings" style="display: none;">
+        <h2>Output Settings</h2>
+        <p>Here, you can set the destination image filename and format. </p>
+        <input type="text" id="customFileName" placeholder="Custom File Name">
+        <select id="outputFormatSelect">
+            <option value="unknown">Select output format</option>
+            <option value="webp">.webp</option>
+            <option value="jpeg">.jpeg</option>
+            <option value="png">.png</option>
+            <option value="ico">.ico</option>
+            <option value="bmp">.bmp</option>
+            <option value="apng">.apng</option>
+        </select>
+        <a id="downloadLink" download><button id="downloadButton" disabled="disabled">Download Converted Image</button></a>
+    </div>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const outputImage = document.getElementById('outputImage');
+        const outputFormatSelect = document.getElementById('outputFormatSelect');
+        const downloadLink = document.getElementById('downloadLink');
+        const customFileNameInput = document.getElementById('customFileName');
+
+        let imageBlob = null;
+
+        // Initially hide the download link
+        downloadLink.style.display = 'none';
+
+        fileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    const image = new Image();
+                    image.src = reader.result;
+                    image.onload = async () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = image.width;
+                        canvas.height = image.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(image, 0, 0);
+
+                        imageBlob = await new Promise((resolve) => {
+                            canvas.toBlob(resolve, 'image/jpeg');
+                        });
+
+                        outputImage.src = URL.createObjectURL(imageBlob);
+
+                        // Show the settings
+                        document.getElementById("settings").removeAttribute("style");
+                        outputFormatSelect.style.display = 'inline-block';
+                        customFileNameInput.style.display = 'inline-block';
+                        
+                        // Update the custom file name input
+                        const fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
+                        customFileNameInput.value = fileNameWithoutExtension;
+
+                        // Only show the download link after the image is loaded
+                        downloadLink.style.display = 'inline-block';
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        outputFormatSelect.addEventListener('change', () => {
+            updateDownloadLink();
+        });
+
+        customFileNameInput.addEventListener('input', () => {
+            updateDownloadLink();
+        });
+
+        function updateDownloadLink() {
+            const selectedFormat = outputFormatSelect.value;
+            const customFileName = customFileNameInput.value || 'image';
+
+            if (['webp', 'jpeg', 'png', 'ico', 'bmp', 'apng'].includes(selectedFormat)) {
+                const url = URL.createObjectURL(imageBlob);
+                document.getElementById("downloadButton").removeAttribute("disabled");
+                downloadLink.href = url;
+                downloadLink.download = `${customFileName}.${selectedFormat}`;
+            } else {
+                alert('Please select supported output format');
+            }
+        }
+    </script>
+</body>
+<footer>
+    <p>This is an open source software with MIT License.<br>The conversion processes are all completed on your browser without any connection to the server.</p>
+</footer>
+</html>
