@@ -17,7 +17,7 @@
     <div id="details">
         <h2>Details</h2>
         <details>
-        <summary>Click to see the details and intructions</summary>
+        <summary>Click to see the details and instructions</summary>
         <p>This approach eliminates the need to upload your images to the internet during the conversion process, <br>thereby ensuring the safety and privacy of your images. This sets it apart from conventional online image conversion tools.</p>
         <p>Instructions:</p>
         <p>1. Select an image file from your computer.<br>2. Select the desired output format.<br>3. Enter a custom file name (optional).<br>4. Click the "Download Converted Image" button to download the converted image.</p>
@@ -26,12 +26,12 @@
     <h2>Upload Image</h2>
     <input type="file" id="fileInput" accept="image/*">
     <br>
-    <img id="outputImage">
+    <img id="outputImage" alt="Output Image" src="" style="display: none;">
     <div id="settings" style="display: none;">
         <h2>Output Settings</h2>
         <p>Here, you can set the destination image filename and format. </p>
-        <input type="text" id="customFileName" placeholder="Custom File Name">
-        <select id="outputFormatSelect">
+        <label for="customFileName"></label><input type="text" id="customFileName" placeholder="Custom File Name">
+        <label for="outputFormatSelect"></label><select id="outputFormatSelect">
             <option value="unknown">Select output format</option>
             <option value="webp">.webp</option>
             <option value="jpeg">.jpeg</option>
@@ -73,7 +73,7 @@
                         imageBlob = await new Promise((resolve) => {
                             canvas.toBlob(resolve, `image/${selectedFormat}`);
                         });
-
+                        document.getElementById("outputImage").removeAttribute("style");
                         outputImage.src = URL.createObjectURL(imageBlob);
 
                         // Show the settings
@@ -82,8 +82,7 @@
                         customFileNameInput.style.display = 'inline-block';
                         
                         // Update the custom file name input
-                        const fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
-                        customFileNameInput.value = fileNameWithoutExtension;
+                        customFileNameInput.value = file.name.replace(/\.[^/.]+$/, "");
 
                         // Only show the download link after the image is loaded
                         downloadLink.style.display = 'inline-block';
